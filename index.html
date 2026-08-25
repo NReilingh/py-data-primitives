@@ -297,7 +297,7 @@ evens   = [x <span class="kw">for</span> x <span class="kw">in</span> lst <span 
         <div class="code-block">lst.<span class="fn">insert</span>(<span class="num">0</span>, x)      <span class="cm"># O(n)</span>
 lst.<span class="fn">insert</span>(i, x)      <span class="cm"># before i</span></div>
         <div class="label">Extend (merge)</div>
-        <div class="code-block">lst.<span class="fn">extend</span>(other)     <span class="cm"># in-place</span>
+        <div class="code-block">lst.<span class="fn">extend</span>(other)       <span class="cm"># in-place</span>
 lst += other            <span class="cm"># same</span>
 lst + other             <span class="cm"># new list</span></div>
         <div class="label">Prepend pattern</div>
@@ -310,7 +310,7 @@ lst + other             <span class="cm"># new list</span></div>
         <div class="label">By index</div>
         <div class="code-block">lst[<span class="num">0</span>]               <span class="cm"># first</span>
 lst[-<span class="num">1</span>]              <span class="cm"># last</span>
-lst[i]                <span class="cm"># any</span></div>
+lst[i]               <span class="cm"># any</span></div>
         <div class="label">Slice</div>
         <div class="code-block">lst[<span class="num">1</span>:<span class="num">4</span>]             <span class="cm"># [1,2,3]</span>
 lst[::<span class="num">2</span>]             <span class="cm"># every other</span>
@@ -327,7 +327,7 @@ lst.<span class="fn">count</span>(x)         <span class="cm"># occurrences</spa
       <td class="code-cell">
         <div class="label">By value</div>
         <div class="code-block">lst.<span class="fn">remove</span>(x)    <span class="cm"># first match</span>
-                      <span class="cm"># raises ValueError</span></div>
+                 <span class="cm"># raises ValueError</span></div>
         <div class="label">By index</div>
         <div class="code-block"><span class="kw">del</span> lst[i]
 <span class="kw">del</span> lst[<span class="num">1</span>:<span class="num">3</span>]        <span class="cm"># slice</span></div>
@@ -335,7 +335,7 @@ lst.<span class="fn">count</span>(x)         <span class="cm"># occurrences</spa
         <div class="code-block">lst.<span class="fn">pop</span>()      <span class="cm"># last, O(1)</span>
 lst.<span class="fn">pop</span>(i)     <span class="cm"># at i, O(n)</span></div>
         <div class="label">Clear / overwrite slice</div>
-        <div class="code-block">lst.<span class="fn">clear</span>()         <span class="cm"># empties</span>
+        <div class="code-block">lst.<span class="fn">clear</span>()          <span class="cm"># empties</span>
 lst[<span class="num">1</span>:<span class="num">3</span>] = []        <span class="cm"># removes range</span></div>
       </td>
     </tr>
@@ -378,7 +378,7 @@ s1 ^ s2    <span class="cm"># symmetric diff</span></div>
         <div class="label">Add single element</div>
         <div class="code-block">s.<span class="fn">add</span>(x)             <span class="cm"># O(1) avg</span></div>
         <div class="label">Add many (merge)</div>
-        <div class="code-block">s.<span class="fn">update</span>(other)      <span class="cm"># iterable</span>
+        <div class="code-block">s.<span class="fn">update</span>(other)       <span class="cm"># iterable</span>
 s |= other            <span class="cm"># same</span></div>
         <div class="label">No insert-at-position</div>
         <div class="code-block"><span class="cm"># sets have no positional</span>
@@ -407,7 +407,7 @@ s1.<span class="fn">isdisjoint</span>(s2)</div>
         <div class="code-block">s.<span class="fn">discard</span>(x)   <span class="cm"># no error if absent</span></div>
         <div class="label">Pop (arbitrary element)</div>
         <div class="code-block">s.<span class="fn">pop</span>()        <span class="cm"># removes & returns one</span>
-                      <span class="cm"># KeyError if empty</span></div>
+               <span class="cm"># KeyError if empty</span></div>
         <div class="label">Clear / difference</div>
         <div class="code-block">s.<span class="fn">clear</span>()
 s -= other      <span class="cm"># remove all in other</span></div>
@@ -435,7 +435,7 @@ s -= other      <span class="cm"># remove all in other</span></div>
       <td class="code-cell">
         <div class="label">Keys only</div>
         <div class="code-block"><span class="kw">for</span> k <span class="kw">in</span> d:           <span class="cm"># default</span>
-<span class="kw">for</span> k <span class="kw">in</span> d.<span class="fn">keys</span>():   <span class="cm"># explicit</span></div>
+<span class="kw">for</span> k <span class="kw">in</span> d.<span class="fn">keys</span>():    <span class="cm"># explicit</span></div>
         <div class="label">Values only</div>
         <div class="code-block"><span class="kw">for</span> v <span class="kw">in</span> d.<span class="fn">values</span>():</div>
         <div class="label">Key-value pairs</div>
@@ -453,9 +453,9 @@ sq  = {k: k**<span class="num">2</span> <span class="kw">for</span> k <span clas
         <div class="code-block">d[k] = v              <span class="cm"># always O(1)</span></div>
         <div class="label">Set only if missing</div>
         <div class="code-block">d.<span class="fn">setdefault</span>(k, v)   <span class="cm"># returns existing</span>
-                             <span class="cm"># or sets & returns v</span></div>
+                     <span class="cm"># or sets & returns v</span></div>
         <div class="label">Merge dicts</div>
-        <div class="code-block">d.<span class="fn">update</span>(other)       <span class="cm"># in-place</span>
+        <div class="code-block">d.<span class="fn">update</span>(other)        <span class="cm"># in-place</span>
 d |= other             <span class="cm"># in-place (3.9+)</span>
 merged = d | other     <span class="cm"># new dict (3.9+)</span></div>
         <div class="label">defaultdict pattern</div>
