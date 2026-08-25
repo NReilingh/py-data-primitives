@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Data Primitives Cheat Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #21262d;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --accent-list: #79c0ff;
+    --accent-set: #56d364;
+    --accent-dict: #ffa657;
+    --accent-bisect: #d2a8ff;
+    --code-bg: #0d1117;
+    --kw: #ff7b72;
+    --fn: #d2a8ff;
+    --str: #a5d6ff;
+    --comment: #8b949e;
+    --num: #79c0ff;
+    --tag-bg-list: rgba(121,192,255,0.12);
+    --tag-bg-set: rgba(86,211,100,0.12);
+    --tag-bg-dict: rgba(255,166,87,0.12);
+    --tag-bg-bisect: rgba(210,168,255,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    padding: 40px 24px 60px;
+    min-width: 900px;
+  }
+
+  header {
+    margin-bottom: 36px;
+  }
+
+  header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  header h1 span {
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  header p {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    table-layout: fixed;
+  }
+
+  /* Column widths */
+  col.c-type    { width: 90px; }
+  col.c-attrs   { width: 200px; }
+  col.c-iter    { width: 260px; }
+  col.c-add     { width: 260px; }
+  col.c-access  { width: 260px; }
+  col.c-delete  { width: 260px; }
+
+  thead tr {
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+  }
+
+  thead th {
+    padding: 14px 16px;
+    text-align: left;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  thead th.col-type { color: var(--text); }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+
+  td {
+    padding: 18px 16px;
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  /* Type label cell */
+  td.type-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
+    vertical-align: middle;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+
+  .type-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .badge-list   { background: var(--tag-bg-list);   color: var(--accent-list); }
+  .badge-set    { background: var(--tag-bg-set);    color: var(--accent-set); }
+  .badge-dict   { background: var(--tag-bg-dict);   color: var(--accent-dict); }
+  .badge-bisect { background: var(--tag-bg-bisect); color: var(--accent-bisect); }
+
+  /* Attributes cell */
+  td.attrs-cell {
+    border-right: 1px solid var(--border);
+  }
+
+  .attr-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 3px 0;
+    font-size: 0.72rem;
+    border-bottom: 1px solid #1c2128;
+  }
+  .attr-row:last-child { border-bottom: none; }
+
+  .attr-key {
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+
+  .attr-val {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-align: right;
+  }
+
+  .yes  { color: var(--accent-set); }
+  .no   { color: var(--kw); }
+  .note { color: var(--text); }
+
+  /* Code cells */
+  td.code-cell {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    font-size: 0.72rem;
+    line-height: 1.7;
+    white-space: pre;
+    overflow-x: auto;
+    scrollbar-width: none;      /* Firefox */
+    -ms-overflow-style: none;   /* IE/Edge */
+  }
+  .code-block:last-child { margin-bottom: 0; }
+  .code-block::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+  .label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.63rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  /* Syntax highlights */
+  .kw      { color: var(--kw); }
+  .fn      { color: var(--fn); }
+  .str     { color: var(--str); }
+  .cm      { color: var(--comment); font-style: italic; }
+  .num     { color: var(--num); }
+  .op      { color: #e6edf3; }
+
+  /* Row accent stripes */
+  tr.row-list   td { background: rgba(121,192,255,0.025); }
+  tr.row-set    td { background: rgba(86,211,100,0.025); }
+  tr.row-dict   td { background: rgba(255,166,87,0.025); }
+  tr.row-bisect td { background: rgba(210,168,255,0.025); }
+
+  /* section divider label inside code */
+  .divider {
+    color: var(--muted);
+    font-size: 0.65rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Python Data Primitives <span>// Cheat Sheet</span></h1>
+  <p>list · set · dict · sorted list (bisect)</p>
+</header>
+
+<div class="table-wrap">
+<table>
+  <colgroup>
+    <col class="c-type">
+    <col class="c-attrs">
+    <col class="c-iter">
+    <col class="c-add">
+    <col class="c-access">
+    <col class="c-delete">
+  </colgroup>
+  <thead>
+    <tr>
+      <th class="col-type">Type</th>
+      <th>Attributes</th>
+      <th>Iteration</th>
+      <th>Add / Insert</th>
+      <th>Access</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <!-- ══════════════════════════════════════════════════════ LIST -->
+    <tr class="row-list">
+      <td class="type-cell">
+        <span class="type-badge badge-list">list</span>
+      </td>
+
+      <td class="attrs-cell">
+        <div class="attr-row"><span class="attr-key">ordered</span>        <span class="attr-val yes note">✓ insertion order</span></div>
+        <div class="attr-row"><span class="attr-key">duplicates</span>     <span class="attr-val yes note">✓ allowed</span></div>
+        <div class="attr-row"><span class="attr-key">indexed</span>        <span class="attr-val yes note">✓ 0-based, negative</span></div>
+        <div class="attr-row"><span class="attr-key">mutable</span>        <span class="attr-val yes note">✓</span></div>
+        <div class="attr-row"><span class="attr-key">element types</span>  <span class="attr-val note">any / mixed</span></div>
+        <div class="attr-row"><span class="attr-key">lookup O(n)</span>    <span class="attr-val note">linear scan</span></div>
+        <div class="attr-row"><span class="attr-key">append O(1)</span>    <span class="attr-val note">amortized</span></div>
+        <div class="attr-row"><span class="attr-key">insert O(n)</span>    <span class="attr-val note">shifts elements</span></div>
+        <div class="attr-row"><span class="attr-key">literal</span>        <span class="attr-val note">[ ] or list()</span></div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">Basic</div>
+        <div class="code-block"><span class="kw">for</span> x <span class="kw">in</span> lst:
+    <span class="fn">print</span>(x)</div>
+        <div class="label">With index</div>
+        <div class="code-block"><span class="kw">for</span> i, x <span class="kw">in</span> <span class="fn">enumerate</span>(lst):
+    <span class="fn">print</span>(i, x)</div>
+        <div class="label">Reversed</div>
+        <div class="code-block"><span class="kw">for</span> x <span class="kw">in</span> <span class="fn">reversed</span>(lst):
+    <span class="fn">print</span>(x)
+<span class="cm"># or lst[::-1]</span></div>
+        <div class="label">Comprehension</div>
+        <div class="code-block">squares = [x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> lst]
+evens   = [x <span class="kw">for</span> x <span class="kw">in</span> lst <span class="kw">if</span> x%<span class="num">2</span>==<span class="num">0</span>]</div>
+        <div class="label">Zip two lists</div>
+        <div class="code-block"><span class="kw">for</span> a, b <span class="kw">in</span> <span class="fn">zip</span>(lst1, lst2):
+    <span class="fn">print</span>(a, b)</div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">Append (end)</div>
+        <div class="code-block">lst.<span class="fn">append</span>(x)          <span class="cm"># O(1)</span></div>
+        <div class="label">Insert at index</div>
+        <div class="code-block">lst.<span class="fn">insert</span>(<span class="num">0</span>, x)      <span class="cm"># O(n)</span>
+lst.<span class="fn">insert</span>(i, x)      <span class="cm"># before i</span></div>
+        <div class="label">Extend (merge)</div>
+        <div class="code-block">lst.<span class="fn">extend</span>(other)     <span class="cm"># in-place</span>
+lst += other            <span class="cm"># same</span>
+lst + other             <span class="cm"># new list</span></div>
+        <div class="label">Prepend pattern</div>
+        <div class="code-block">lst = [x] + lst         <span class="cm"># new list</span>
+<span class="cm"># prefer collections.deque</span>
+<span class="cm"># for frequent prepends</span></div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">By index</div>
+        <div class="code-block">lst[<span class="num">0</span>]               <span class="cm"># first</span>
+lst[-<span class="num">1</span>]              <span class="cm"># last</span>
+lst[i]                <span class="cm"># any</span></div>
+        <div class="label">Slice</div>
+        <div class="code-block">lst[<span class="num">1</span>:<span class="num">4</span>]             <span class="cm"># [1,2,3]</span>
+lst[::<span class="num">2</span>]             <span class="cm"># every other</span>
+lst[<span class="num">2</span>:]              <span class="cm"># from idx 2</span></div>
+        <div class="label">Search</div>
+        <div class="code-block">lst.<span class="fn">index</span>(x)         <span class="cm"># first idx</span>
+x <span class="kw">in</span> lst             <span class="cm"># bool O(n)</span>
+lst.<span class="fn">count</span>(x)         <span class="cm"># occurrences</span></div>
+        <div class="label">Min / Max / Sort view</div>
+        <div class="code-block"><span class="fn">min</span>(lst); <span class="fn">max</span>(lst)
+<span class="fn">sorted</span>(lst)           <span class="cm"># new list</span></div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">By value</div>
+        <div class="code-block">lst.<span class="fn">remove</span>(x)    <span class="cm"># first match</span>
+                      <span class="cm"># raises ValueError</span></div>
+        <div class="label">By index</div>
+        <div class="code-block"><span class="kw">del</span> lst[i]
+<span class="kw">del</span> lst[<span class="num">1</span>:<span class="num">3</span>]        <span class="cm"># slice</span></div>
+        <div class="label">Pop</div>
+        <div class="code-block">lst.<span class="fn">pop</span>()      <span class="cm"># last, O(1)</span>
+lst.<span class="fn">pop</span>(i)     <span class="cm"># at i, O(n)</span></div>
+        <div class="label">Clear / overwrite slice</div>
+        <div class="code-block">lst.<span class="fn">clear</span>()         <span class="cm"># empties</span>
+lst[<span class="num">1</span>:<span class="num">3</span>] = []        <span class="cm"># removes range</span></div>
+      </td>
+    </tr>
+
+    <!-- ══════════════════════════════════════════════════════ SET -->
+    <tr class="row-set">
+      <td class="type-cell">
+        <span class="type-badge badge-set">set</span>
+      </td>
+
+      <td class="attrs-cell">
+        <div class="attr-row"><span class="attr-key">ordered</span>        <span class="attr-val no">✗ unordered</span></div>
+        <div class="attr-row"><span class="attr-key">duplicates</span>     <span class="attr-val no">✗ auto-deduped</span></div>
+        <div class="attr-row"><span class="attr-key">indexed</span>        <span class="attr-val no">✗ no indexing</span></div>
+        <div class="attr-row"><span class="attr-key">mutable</span>        <span class="attr-val yes note">✓ (frozenset: ✗)</span></div>
+        <div class="attr-row"><span class="attr-key">element types</span>  <span class="attr-val note">hashable only</span></div>
+        <div class="attr-row"><span class="attr-key">lookup O(1)</span>    <span class="attr-val note">avg hash-based</span></div>
+        <div class="attr-row"><span class="attr-key">add O(1)</span>       <span class="attr-val note">avg</span></div>
+        <div class="attr-row"><span class="attr-key">set ops</span>        <span class="attr-val note">∪ ∩ − △</span></div>
+        <div class="attr-row"><span class="attr-key">literal</span>        <span class="attr-val note">{ } or set()</span></div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">Basic (order not guaranteed)</div>
+        <div class="code-block"><span class="kw">for</span> x <span class="kw">in</span> s:
+    <span class="fn">print</span>(x)</div>
+        <div class="label">Sorted iteration</div>
+        <div class="code-block"><span class="kw">for</span> x <span class="kw">in</span> <span class="fn">sorted</span>(s):
+    <span class="fn">print</span>(x)</div>
+        <div class="label">Comprehension</div>
+        <div class="code-block">squares = {x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> s}</div>
+        <div class="label">Set operations</div>
+        <div class="code-block">s1 | s2    <span class="cm"># union</span>
+s1 &amp; s2    <span class="cm"># intersection</span>
+s1 - s2    <span class="cm"># difference</span>
+s1 ^ s2    <span class="cm"># symmetric diff</span></div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">Add single element</div>
+        <div class="code-block">s.<span class="fn">add</span>(x)             <span class="cm"># O(1) avg</span></div>
+        <div class="label">Add many (merge)</div>
+        <div class="code-block">s.<span class="fn">update</span>(other)      <span class="cm"># iterable</span>
+s |= other            <span class="cm"># same</span></div>
+        <div class="label">No insert-at-position</div>
+        <div class="code-block"><span class="cm"># sets have no positional</span>
+<span class="cm"># insertion — use list or</span>
+<span class="cm"># sortedcontainers.SortedList</span></div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">Membership test</div>
+        <div class="code-block">x <span class="kw">in</span> s            <span class="cm"># O(1) avg</span>
+x <span class="kw">not in</span> s        <span class="cm"># O(1) avg</span></div>
+        <div class="label">No index access</div>
+        <div class="code-block"><span class="cm"># s[0] → TypeError</span>
+<span class="cm"># peek any element:</span>
+x = <span class="fn">next</span>(<span class="fn">iter</span>(s))</div>
+        <div class="label">Subset / superset</div>
+        <div class="code-block">s1 &lt;= s2    <span class="cm"># s1 ⊆ s2</span>
+s1 &lt; s2     <span class="cm"># s1 ⊂ s2 (proper)</span>
+s1.<span class="fn">isdisjoint</span>(s2)</div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">Remove (raises if missing)</div>
+        <div class="code-block">s.<span class="fn">remove</span>(x)    <span class="cm"># KeyError if absent</span></div>
+        <div class="label">Discard (safe)</div>
+        <div class="code-block">s.<span class="fn">discard</span>(x)   <span class="cm"># no error if absent</span></div>
+        <div class="label">Pop (arbitrary element)</div>
+        <div class="code-block">s.<span class="fn">pop</span>()        <span class="cm"># removes & returns one</span>
+                      <span class="cm"># KeyError if empty</span></div>
+        <div class="label">Clear / difference</div>
+        <div class="code-block">s.<span class="fn">clear</span>()
+s -= other      <span class="cm"># remove all in other</span></div>
+      </td>
+    </tr>
+
+    <!-- ══════════════════════════════════════════════════════ DICT -->
+    <tr class="row-dict">
+      <td class="type-cell">
+        <span class="type-badge badge-dict">dict</span>
+      </td>
+
+      <td class="attrs-cell">
+        <div class="attr-row"><span class="attr-key">ordered</span>        <span class="attr-val yes note">✓ insertion order (3.7+)</span></div>
+        <div class="attr-row"><span class="attr-key">key dupes</span>       <span class="attr-val no">✗ keys unique</span></div>
+        <div class="attr-row"><span class="attr-key">value dupes</span>     <span class="attr-val yes note">✓ values may repeat</span></div>
+        <div class="attr-row"><span class="attr-key">indexed</span>        <span class="attr-val note">by key only</span></div>
+        <div class="attr-row"><span class="attr-key">mutable</span>        <span class="attr-val yes note">✓</span></div>
+        <div class="attr-row"><span class="attr-key">key types</span>      <span class="attr-val note">hashable only</span></div>
+        <div class="attr-row"><span class="attr-key">value types</span>    <span class="attr-val note">any</span></div>
+        <div class="attr-row"><span class="attr-key">lookup O(1)</span>    <span class="attr-val note">avg hash-based</span></div>
+        <div class="attr-row"><span class="attr-key">literal</span>        <span class="attr-val note">{k:v} or dict()</span></div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">Keys only</div>
+        <div class="code-block"><span class="kw">for</span> k <span class="kw">in</span> d:           <span class="cm"># default</span>
+<span class="kw">for</span> k <span class="kw">in</span> d.<span class="fn">keys</span>():   <span class="cm"># explicit</span></div>
+        <div class="label">Values only</div>
+        <div class="code-block"><span class="kw">for</span> v <span class="kw">in</span> d.<span class="fn">values</span>():</div>
+        <div class="label">Key-value pairs</div>
+        <div class="code-block"><span class="kw">for</span> k, v <span class="kw">in</span> d.<span class="fn">items</span>():</div>
+        <div class="label">Sorted by key</div>
+        <div class="code-block"><span class="kw">for</span> k <span class="kw">in</span> <span class="fn">sorted</span>(d):
+    <span class="fn">print</span>(k, d[k])</div>
+        <div class="label">Comprehension</div>
+        <div class="code-block">inv = {v: k <span class="kw">for</span> k, v <span class="kw">in</span> d.<span class="fn">items</span>()}
+sq  = {k: k**<span class="num">2</span> <span class="kw">for</span> k <span class="kw">in</span> d}</div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">Set / overwrite key</div>
+        <div class="code-block">d[k] = v              <span class="cm"># always O(1)</span></div>
+        <div class="label">Set only if missing</div>
+        <div class="code-block">d.<span class="fn">setdefault</span>(k, v)   <span class="cm"># returns existing</span>
+                             <span class="cm"># or sets & returns v</span></div>
+        <div class="label">Merge dicts</div>
+        <div class="code-block">d.<span class="fn">update</span>(other)       <span class="cm"># in-place</span>
+d |= other             <span class="cm"># in-place (3.9+)</span>
+merged = d | other     <span class="cm"># new dict (3.9+)</span></div>
+        <div class="label">defaultdict pattern</div>
+        <div class="code-block"><span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+d = <span class="fn">defaultdict</span>(<span class="fn">list</span>)
+d[k].<span class="fn">append</span>(v)  <span class="cm"># no KeyError</span></div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">Direct (raises KeyError)</div>
+        <div class="code-block">d[k]</div>
+        <div class="label">Safe with default</div>
+        <div class="code-block">d.<span class="fn">get</span>(k)            <span class="cm"># None if missing</span>
+d.<span class="fn">get</span>(k, default)   <span class="cm"># custom default</span></div>
+        <div class="label">Check key existence</div>
+        <div class="code-block">k <span class="kw">in</span> d              <span class="cm"># O(1)</span>
+k <span class="kw">not in</span> d          <span class="cm"># O(1)</span></div>
+        <div class="label">Views (live)</div>
+        <div class="code-block">d.<span class="fn">keys</span>()    <span class="cm"># KeysView</span>
+d.<span class="fn">values</span>()  <span class="cm"># ValuesView</span>
+d.<span class="fn">items</span>()   <span class="cm"># ItemsView</span></div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">Delete key (raises if absent)</div>
+        <div class="code-block"><span class="kw">del</span> d[k]</div>
+        <div class="label">Pop with default</div>
+        <div class="code-block">d.<span class="fn">pop</span>(k)            <span class="cm"># KeyError if absent</span>
+d.<span class="fn">pop</span>(k, default)   <span class="cm"># safe</span></div>
+        <div class="label">Pop last inserted</div>
+        <div class="code-block">k, v = d.<span class="fn">popitem</span>()  <span class="cm"># LIFO (3.7+)</span></div>
+        <div class="label">Clear</div>
+        <div class="code-block">d.<span class="fn">clear</span>()           <span class="cm"># empties dict</span></div>
+      </td>
+    </tr>
+
+    <!-- ══════════════════════════════════════════════════════ BISECT -->
+    <tr class="row-bisect">
+      <td class="type-cell">
+        <span class="type-badge badge-bisect">bisect</span>
+      </td>
+
+      <td class="attrs-cell">
+        <div class="attr-row"><span class="attr-key">structure</span>      <span class="attr-val note">sorted list (via bisect)</span></div>
+        <div class="attr-row"><span class="attr-key">ordered</span>        <span class="attr-val yes note">✓ always sorted</span></div>
+        <div class="attr-row"><span class="attr-key">duplicates</span>     <span class="attr-val yes note">✓ allowed</span></div>
+        <div class="attr-row"><span class="attr-key">indexed</span>        <span class="attr-val yes note">✓ standard list</span></div>
+        <div class="attr-row"><span class="attr-key">mutable</span>        <span class="attr-val yes note">✓</span></div>
+        <div class="attr-row"><span class="attr-key">element types</span>  <span class="attr-val note">comparable (sortable)</span></div>
+        <div class="attr-row"><span class="attr-key">search O(log n)</span><span class="attr-val note">binary search</span></div>
+        <div class="attr-row"><span class="attr-key">insert O(n)</span>    <span class="attr-val note">shifts elements</span></div>
+        <div class="attr-row"><span class="attr-key">import</span>         <span class="attr-val note">import bisect</span></div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">Same as list — always sorted</div>
+        <div class="code-block"><span class="kw">for</span> x <span class="kw">in</span> lst:      <span class="cm"># already sorted</span>
+    <span class="fn">print</span>(x)</div>
+        <div class="label">Range iteration (by value)</div>
+        <div class="code-block"><span class="kw">import</span> bisect
+lo = bisect.<span class="fn">bisect_left</span>(lst, <span class="num">10</span>)
+hi = bisect.<span class="fn">bisect_right</span>(lst, <span class="num">20</span>)
+<span class="kw">for</span> x <span class="kw">in</span> lst[lo:hi]:
+    <span class="fn">print</span>(x)   <span class="cm"># values in [10, 20]</span></div>
+        <div class="label">Comprehension (fine, stays sorted)</div>
+        <div class="code-block">evens = [x <span class="kw">for</span> x <span class="kw">in</span> lst <span class="kw">if</span> x%<span class="num">2</span>==<span class="num">0</span>]</div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">Insert maintaining sort order</div>
+        <div class="code-block"><span class="kw">import</span> bisect
+bisect.<span class="fn">insort</span>(lst, x)       <span class="cm"># O(n)</span></div>
+        <div class="label">insort_left vs insort_right</div>
+        <div class="code-block">bisect.<span class="fn">insort_left</span>(lst, x)
+<span class="cm"># inserts BEFORE existing equal vals</span>
+bisect.<span class="fn">insort_right</span>(lst, x)
+<span class="cm"># inserts AFTER existing equal vals</span>
+<span class="cm"># insort == insort_right</span></div>
+        <div class="label">Manual: find index then insert</div>
+        <div class="code-block">i = bisect.<span class="fn">bisect_left</span>(lst, x)
+lst.<span class="fn">insert</span>(i, x)</div>
+        <div class="label">⚠ Never use list.append / insert directly</div>
+        <div class="code-block"><span class="cm"># would break sort invariant</span>
+<span class="cm"># always use insort()</span></div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">Binary search (find position)</div>
+        <div class="code-block">bisect.<span class="fn">bisect_left</span>(lst, x)
+<span class="cm"># index where x would go (left)</span>
+bisect.<span class="fn">bisect_right</span>(lst, x)
+<span class="cm"># index where x would go (right)</span></div>
+        <div class="label">Check if value exists</div>
+        <div class="code-block">i = bisect.<span class="fn">bisect_left</span>(lst, x)
+found = i &lt; <span class="fn">len</span>(lst) <span class="kw">and</span> lst[i] == x</div>
+        <div class="label">Floor / ceiling value</div>
+        <div class="code-block">i = bisect.<span class="fn">bisect_left</span>(lst, x)
+floor   = lst[i-<span class="num">1</span>] <span class="kw">if</span> i &gt; <span class="num">0</span> <span class="kw">else</span> <span class="kw">None</span>
+ceiling = lst[i] <span class="kw">if</span> i &lt; <span class="fn">len</span>(lst) <span class="kw">else</span> <span class="kw">None</span></div>
+        <div class="label">By index (normal list access)</div>
+        <div class="code-block">lst[<span class="num">0</span>]   <span class="cm"># smallest</span>
+lst[-<span class="num">1</span>]  <span class="cm"># largest</span></div>
+      </td>
+
+      <td class="code-cell">
+        <div class="label">Remove by value (first occurrence)</div>
+        <div class="code-block">i = bisect.<span class="fn">bisect_left</span>(lst, x)
+<span class="kw">if</span> i &lt; <span class="fn">len</span>(lst) <span class="kw">and</span> lst[i] == x:
+    lst.<span class="fn">pop</span>(i)</div>
+        <div class="label">Remove all occurrences of x</div>
+        <div class="code-block">lo = bisect.<span class="fn">bisect_left</span>(lst, x)
+hi = bisect.<span class="fn">bisect_right</span>(lst, x)
+<span class="kw">del</span> lst[lo:hi]</div>
+        <div class="label">Remove by index (as normal list)</div>
+        <div class="code-block"><span class="kw">del</span> lst[i]
+lst.<span class="fn">pop</span>()     <span class="cm"># removes largest</span>
+lst.<span class="fn">pop</span>(<span class="num">0</span>)    <span class="cm"># removes smallest O(n)</span></div>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+</div>
+
+</body>
+</html>
